@@ -7,7 +7,7 @@ public interface Setting<T> {
     Class<T> getType();
     String getKey();
     T getValue();
-    void updateValue(String value);
+    void updateValue(String newValue);
     void addListener(BiConsumer<T, T> listener);
     
 }
