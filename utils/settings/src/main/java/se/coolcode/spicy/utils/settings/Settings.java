@@ -14,23 +14,53 @@ public class Settings {
     private ScheduledExecutorService executor;
     private Set<Setting<?>> settings = new HashSet<>();
     private List<ConfigurationSource> configurationSources = new ArrayList<>();
+    private String name;
+    private int updateFrequencyInSeconds;
 
 
     public Settings(String name, ConfigurationSource source) {
-        initExecutor(name);
+        this(name, source, 30);
+    }
+    
+    public Settings(String name, ConfigurationSource source, int updateFrequencyInSeconds) {
+        this.name = name;
+        this.updateFrequencyInSeconds = updateFrequencyInSeconds;
+        configurationSources.add(source);
     }
 
-    private void initExecutor(String name) {
+    public void init() {
         if (executor == null) {
             ThreadGroup threadGroup = new ThreadGroup("settings-"+name);
             executor = Executors.newSingleThreadScheduledExecutor(runnable -> new Thread(threadGroup, runnable, "-update-thread-1"));
-            executor.scheduleAtFixedRate(new SettingsUpdater(settings, configurationSources), 1, 30, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(new SettingsUpdater(settings, configurationSources), 1, updateFrequencyInSeconds, TimeUnit.SECONDS);
         }
     }
 
-    public Settings createSetting(String key, boolean initValue) {
-        settings.add(new BooleanSetting(key, initValue));
-        return this;
+    public void destroy() {
+        executor.shutdown();
+        int timeout = updateFrequencyInSeconds * 2;
+        try {
+          if (!executor.awaitTermination(timeout, TimeUnit.SECONDS)) {
+            executor.shutdownNow();
+            if (!executor.awaitTermination(timeout, TimeUnit.SECONDS))
+                System.err.println("ScheduledExecutorService did not terminate.");
+          }
+        } catch (InterruptedException ie) {
+          executor.shutdownNow();
+          Thread.currentThread().interrupt();
+        }
+    }
+
+    public Setting<Boolean> createSetting(String key, boolean initValue) {
+        BooleanSetting setting = new BooleanSetting(key, initValue);
+        settings.add(setting);
+        return setting;
+    }
+
+    public Setting<Integer> createSetting(String key, int initValue) {
+        IntSetting setting = new IntSetting(key, initValue);
+        settings.add(setting);
+        return setting;
     }
 
     public Stream<Setting<?>> stream() {
