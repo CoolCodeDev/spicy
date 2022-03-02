@@ -9,6 +9,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import se.coolcode.spicy.utils.settings.configuration.ConfigurationSource;
+
 public class Settings {
 
     private ScheduledExecutorService executor;
@@ -30,7 +32,8 @@ public class Settings {
 
     public void init() {
         if (executor == null) {
-            ThreadGroup threadGroup = new ThreadGroup("settings-"+name);
+            ThreadGroup parentThreadGroup = Thread.currentThread().getThreadGroup();
+            ThreadGroup threadGroup = new ThreadGroup(parentThreadGroup, "settings-"+name);
             executor = Executors.newSingleThreadScheduledExecutor(runnable -> new Thread(threadGroup, runnable, "-update-thread-1"));
             executor.scheduleAtFixedRate(new SettingsUpdater(settings, configurationSources), 1, updateFrequencyInSeconds, TimeUnit.SECONDS);
         }
