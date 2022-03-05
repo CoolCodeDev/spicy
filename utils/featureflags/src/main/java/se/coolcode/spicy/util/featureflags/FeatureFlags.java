@@ -1,5 +1,10 @@
 package se.coolcode.spicy.util.featureflags;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.function.Supplier;
+
 import se.coolcode.spicy.utils.settings.Settings;
 
 public class FeatureFlags {
@@ -14,5 +19,13 @@ public class FeatureFlags {
 
     public static FeatureFlags fixed() {
         return new FixedFeatureFlags();
+    }
+
+    public static <T> T objectToggle(Supplier<Boolean> featureFlag, Class<T> type, T active, T inactive) {
+        return (T) Proxy.newProxyInstance(FeatureFlags.class.getClassLoader(), 
+        new Class[] {type}, 
+        (proxy, method, arguments) -> {
+            return featureFlag.get() ? method.invoke(active, arguments) : method.invoke(inactive, arguments);
+        });
     }
 }
