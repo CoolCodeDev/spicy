@@ -6,21 +6,22 @@ public class Main {
     
     public static void main(String[] args) {
         LoggerConfiguration
-        .dateTime(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        .eventTime(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         .logLevel()
-        .type()
+        .logger()
         .message()
         .toConsole()
-        .toFile("log.txt");
+        .toFile("log.txt")
+        .asJson();
 
         Logger logger = LoggerFactory.getLogger(Main.class);
 
         logger.info("Hello");
         logger.info("Hello");
         logger.info("Hello");
-        logger.info("Hello");
-        logger.info("Hello");
-        logger.info("Hello");
+        logger.warn("Hello");
+        logger.warn("Hello");
+        logger.warn("Hello");
         logger.info("Hello");
     }
 }
