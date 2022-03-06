@@ -35,12 +35,16 @@ public class LoggerConfiguration {
     static List<LogPattern> patterns = new ArrayList<>();
     static boolean json = false;
 
-    public static LoggerConfiguration toConsole() {
+    public static LoggerConfiguration init() {
+        return INSTANCE;
+    }
+
+    public LoggerConfiguration toConsole() {
         output.add(System.out);
         return INSTANCE;
     }
 
-    public static LoggerConfiguration toFile(String fileName) {
+    public LoggerConfiguration toFile(String fileName) {
         try {
             Path path = Paths.get(fileName);
             output.add(new FileOutputStream(path.toFile(), true));
@@ -50,12 +54,12 @@ public class LoggerConfiguration {
         return INSTANCE;
     }
 
-    public static LoggerConfiguration asJson() {
+    public LoggerConfiguration asJson() {
         LoggerConfiguration.json = true;
         return INSTANCE;
     }
     
-    public static LoggerConfiguration eventTime(DateTimeFormatter formatter) {
+    public LoggerConfiguration eventTime(DateTimeFormatter formatter) {
         patterns.add(new EventTimeLogPattern(formatter));
         return INSTANCE;
     }
