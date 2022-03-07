@@ -22,6 +22,7 @@ public class DynamicFeatureFlags extends FixedFeatureFlags {
         if (String.class.equals(type)) {
             Setting<String> stringSetting = (Setting<String>) setting;
             this.createExplicit(stringSetting.getKey(), Stream.of(stringSetting.getValue().split(","))
+            //TODO: add listener that updates the value on the feature flag when the setting changes.
             .map(String::trim)
             .collect(Collectors.toSet()));
         } else if (Integer.class.equals(type)) {
