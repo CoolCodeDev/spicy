@@ -12,6 +12,11 @@
   <dependencies>
     <dependency>
       <groupId>se.coolcode.spicy</groupId>
+      <artifactId>util-logger</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>se.coolcode.spicy</groupId>
       <artifactId>util-settings</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
