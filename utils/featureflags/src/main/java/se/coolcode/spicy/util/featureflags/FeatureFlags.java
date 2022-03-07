@@ -19,6 +19,7 @@ public class FeatureFlags {
         return new FixedFeatureFlags();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T objectToggle(Supplier<Boolean> featureFlag, Class<T> type, T active, T inactive) {
         return (T) Proxy.newProxyInstance(FeatureFlags.class.getClassLoader(), 
         new Class[] {type}, 
